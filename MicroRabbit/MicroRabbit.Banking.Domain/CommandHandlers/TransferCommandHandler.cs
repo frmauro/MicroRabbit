@@ -22,7 +22,6 @@ namespace MicroRabbit.Banking.Domain.CommandHandlers
         {
             //Publish event to RabbitMQ
             _bus.Publish(new TransferCreatedEvent(request.From, request.To, request.Amount));
-
             return Task.FromResult(true);
         }
     }
