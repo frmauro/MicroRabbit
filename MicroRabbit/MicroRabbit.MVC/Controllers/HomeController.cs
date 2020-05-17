@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MicroRabbit.MVC.Models;
+using MicroRabbit.MVC.Services;
+using MicroRabbit.MVC.Models.DTO;
 
 namespace MicroRabbit.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ITransferService _transferService;
+
+        public HomeController(ITransferService transferService)
         {
-            _logger = logger;
+            _transferService = transferService;
         }
 
         public IActionResult Index()
@@ -32,6 +35,20 @@ namespace MicroRabbit.MVC.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Transfer(TransferViewModel model)
+        {
+            TransferDto transferDto = new TransferDto()
+            {
+                FromAccount = model.FromAccount,
+                ToAccount = model.ToAccount,
+                TransferAmount = model.TransferAccount
+            };
+
+            await _transferService.Transfer(transferDto);
+            return View("Index");
         }
     }
 }
